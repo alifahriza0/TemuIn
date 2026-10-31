@@ -21,6 +21,7 @@ y = WordCompleter(x, ignore_case = True)
 input = prompt("Masuk sini: ", completer = y)
 '''
 import os
+import subprocess
 import sys
 import csv
 import time
@@ -31,19 +32,22 @@ from datetime import datetime
 from pathlib import Path
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
+from math import ceil
 
 kategori = ['Elektronik', 'ATK', 'Dompet', 'Kartu', 'Pakaian & Aksesoris', 'Kunci', 'Alat Ibadah', 'Wadah Konsumsi']
 loc_ambil = ['GKU 1', 'GKU 2', 'GKU 3', 'Gedung A/E', 'Gedung Utama', 'Sekretariat Ditsama']
 # Deklarasi variabel global
 list_barang = pd.read_csv("pelaporan.csv")
 list_aduan = pd.read_csv("pengaduan.csv")
+list_barang.index += 1
+list_aduan.index += 1
 nama_lengkap = None
 nim = None
 kontak = None
 data_pelaporan = []
 data_pengaduan = []
 
-def typing_effect(text, delay=0.0015):
+def typing_effect(text, delay=0.01):
     for char in text:
         sys.stdout.write(char)
         sys.stdout.flush()
@@ -85,6 +89,24 @@ def pilih_autofill(pesan, pilihan):
                 return opsi
         #di luar for karena return pasti stop
         print("Pilihan tidak tersedia. Silakan pilih dari daftar yang disediakan.")
+
+def detail_barang(barang, mode):
+    #tampilin detail dari barang yang dipilih
+    pindah_menu()
+    print('=== DETAIL BARANG ===')
+
+    print(f"ID                  : {barang['ID']}")
+    print(f"Nama barang         : {barang['keyword']}")
+    print(f"Kategori            : {barang['kategori']}")
+    print(f"Deskripsi           : {barang['deskripsi']}")
+    print(f"Waktu ditemukan     : {barang['waktu']}")
+    print(f"Lokasi ditemukan    : {barang['loc_found']}")
+    print(f"Lokasi pengambilan  : {barang['loc_pick']}")
+    if mode == "pelaporan":
+        file_foto = os.path.join("gambar_pelaporan", barang['path_gambar'])
+    else:
+        file_foto = os.path.join("gambar_pengaduan", barang['path_gambar'])
+    os.startfile(file_foto)
 
 def input_waktu(pesan):
     format = "%d/%m/%y %H.%M"
@@ -324,20 +346,61 @@ def konfirmasi_status():
     print('Status berhasil dikonfirmasi dan data berhasil dihapus.')
     pindah_menu()
 
-def lihat_list(list_data):
+def lihat_barang():
+    bersihkan_layar()
+    list_size = ceil(list_barang.shape[0] / 10)
+    page = list_barang.loc[1:10, ['ID', 'kategori', 'keyword']]
+    print(f"""Masukkan input berupa: 
+    1. Nomor halaman 1 - {list_size}
+    2. ID (untuk melihat detail barang)
+    3. 0 (untuk kembali ke menu utama)""")
     while True:
         nomor_hal = input("> ")
+        bersihkan_layar()
         if nomor_hal == '0':
             break
         elif len(nomor_hal) == 6:
             selected = list_barang.query('ID == @nomor_hal')
-            print(selected[['ID', 'kategori', 'keyword']])
-            break
-        else:
+            if selected.empty:
+                print("Tidak ada pengaduan dengan ID tersebut! Mohon input ulang")
+                continue 
+            detail_barang(selected.iloc[0], "pelaporan")
+        elif (int(nomor_hal) > 0 and int(nomor_hal) <= list_size):
             nomor_hal = int(nomor_hal)
             page = list_barang.loc[1*(10*(nomor_hal-1)):10*(nomor_hal), ['ID', 'kategori', 'keyword']]
-            print("="*10)
+            print("="*17 + " List Barang Temuan " + "="*17)
             print(page)
+            print(f"Halaman {nomor_hal} dari {list_size}")
+        else:
+            print("Opsi tidak tersedia! Tolong input ulang")
+
+def lihat_aduan():
+    bersihkan_layar()
+    list_size = ceil(list_aduan.shape[0] / 10)
+    page = list_aduan.loc[1:10, ['ID', 'kategori', 'keyword']]
+    print(f"""Masukkan input berupa: 
+    1. Nomor halaman 1 - {list_size}
+    2. ID (untuk melihat detail barang)
+    3. 0 (untuk kembali ke menu utama)""")
+    while True:
+        nomor_hal = input("> ")
+        bersihkan_layar()
+        if nomor_hal == '0':
+            break
+        elif len(nomor_hal) == 6:
+            selected = list_aduan.query('ID == @nomor_hal')
+            if selected.empty:
+                print("Tidak ada pengaduan dengan ID tersebut! Mohon input ulang")
+                continue 
+            detail_barang(selected.iloc[0], "pengaduan")
+        elif (int(nomor_hal) > 0 and int(nomor_hal) <= list_size):
+            nomor_hal = int(nomor_hal)
+            page = list_aduan.loc[1*(10*(nomor_hal-1)):10*(nomor_hal), ['ID', 'kategori', 'keyword']]
+            print("="*17 + " List Barang Hilang " + "="*17)
+            print(page)
+            print(f"Halaman {nomor_hal} dari {list_size}")
+        else:
+            print("Opsi tidak tersedia! Tolong input ulang")
 
 typing_effect("Selamat Datang di TemuIn!")
 nama_lengkap = input("Masukkan Nama Lengkap Anda: ")
@@ -361,9 +424,9 @@ while True:
     elif (opsi == "3"):
         pengaduan_barang(nama_lengkap,nim,kontak)
     elif (opsi == "4"):
-        pass
+        lihat_barang()
     elif (opsi == "5"):
-        pass
+        lihat_aduan()
     elif (opsi == "6"):
         konfirmasi_status()
     elif (opsi == "7"):
