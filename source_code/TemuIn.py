@@ -1,6 +1,6 @@
 '''
 Author              : Kelompok 9
-Tanggal Pengerjaan  : 19 Oktober - 1 November 2026
+Tanggal Pengerjaan  : 19 Oktober - 2 November 2026
 
 PROGRAM TemuIn - PENCARIAN DAN PELAPORAN BARANG HILANG
 Deskripsi           : Simulasi sistem Lost And Found lingkungan ITB dengan fitur-fitur berupa pelaporan barang temuan, pencarian dan pengaduan
