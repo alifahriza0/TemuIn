@@ -16,7 +16,7 @@ Repository ini dibuat dalam rangka memenuhi Tugas Besar mata kuliah Berpikir Kom
 
 ### Dependencies & Installing
 
-Untuk menjalankan program ini, Anda dapat mengunduh folder source_code yang berisi folder penyimpanan gambar, kode utama, serta penyimpan data dalam bentuk csv. Jangan lupa untuk ekstrak zip gambarnya!
+Untuk menjalankan program ini, Anda dapat mengunduh zip "code" yang berisi folder penyimpanan gambar, kode utama, serta penyimpan data dalam bentuk csv. Jangan lupa untuk ekstrak terlebih dahulu!
 
 Program ini memakai 2 modul diluar bawaan python, yaitu pandas dan prompt_toolkit. Oleh karena itu, Anda perlu menjalankan kode berikut di terminal sebelum dapat menggunakan program:
 
