@@ -21,7 +21,7 @@ Untuk menjalankan program ini, Anda dapat mengunduh zip "code" yang berisi folde
 Program ini memakai 2 modul diluar bawaan python, yaitu pandas dan prompt_toolkit. Oleh karena itu, Anda perlu menjalankan kode berikut di terminal sebelum dapat menggunakan program:
 
 ```bash
-pip install pandas prompt-toolkit
+pip install pandas prompt_toolkit
 ```
 
 ## Authors
